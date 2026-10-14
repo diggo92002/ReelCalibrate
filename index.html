@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#183b38">
+  <meta name="description" content="捲線器米數誤差換算，輸入米數與倍數即可換算。">
+  <title>捲線器誤差換算</title>
+  <style>
+    :root{color-scheme:light;--ink:#183b38;--muted:#697b77;--line:#dce5df;--accent:#23695b;--paper:#fffefa}
+    *{box-sizing:border-box}body{margin:0;background:#edf2ed;color:var(--ink);font-family:system-ui,-apple-system,"Microsoft JhengHei",sans-serif;min-height:100dvh}
+    button,input{font:inherit}button{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}button:focus-visible{outline:3px solid #d3a33a;outline-offset:3px}
+    main{max-width:680px;margin:auto;padding:calc(34px + env(safe-area-inset-top)) 18px calc(28px + env(safe-area-inset-bottom))}
+    header{margin:0 6px 30px}.eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;color:var(--accent);margin:0 0 12px}h1{font-size:clamp(25px,6vw,34px);letter-spacing:.04em;margin:0 0 10px}header p{font-size:14px;margin:0;color:var(--muted);line-height:1.7}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px 16px;margin:0 0 18px;box-shadow:0 8px 24px #183b3805}.card-head{display:flex;align-items:center;gap:10px;margin-bottom:22px}.step{border:1px solid var(--line);border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-size:12px;color:var(--muted)}h2{font-size:16px;margin:0;font-weight:650}
+    .fields{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,.8fr);gap:9px}.field{min-width:0}.label{display:block;font-size:12px;color:var(--muted);margin-bottom:9px;white-space:nowrap}.number{display:flex;align-items:center;justify-content:center;min-height:66px;width:100%;padding:9px 5px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink);font-size:clamp(19px,5vw,27px);font-weight:650;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.editable:active{background:#edf2ed}.result{background:#e8f1eb;border-color:#d6e6dc;color:#195746}.unit{display:block;text-align:center;font-size:11px;color:var(--muted);margin-top:8px}.formula{font-size:12px;color:var(--muted);margin:18px 0 0;padding-top:15px;border-top:1px solid #edf0eb}
+    footer{font-size:12px;line-height:1.8;color:var(--muted);text-align:center;margin-top:24px}#storage-note{color:#925c22}.reset{border:0;background:transparent;color:var(--accent);padding:12px;font-size:13px;text-decoration:underline;text-underline-offset:4px}
+    dialog{width:min(360px,calc(100% - 28px));border:0;border-radius:24px;padding:22px;background:var(--paper);color:var(--ink);box-shadow:0 25px 80px #0003;max-height:calc(100dvh - 24px);overflow:auto}dialog::backdrop{background:#102d2866;backdrop-filter:blur(3px)}.dialog-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.dialog-head h2{font-size:19px}.close{width:42px;height:42px;border:0;border-radius:50%;background:#eef2ec;font-size:24px;color:var(--ink)}#entry{width:100%;height:64px;border:1px solid var(--line);border-radius:12px;background:white;color:var(--ink);text-align:right;padding:12px;font-size:30px;font-variant-numeric:tabular-nums;outline:0}#entry:focus{border-color:var(--accent)}.error{color:#ac382d;font-size:12px;min-height:20px;margin:8px 0}.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.keypad button{min-height:52px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:22px;color:var(--ink)}.keypad button:active{background:#dfeae2}.keypad .utility{font-size:14px;background:#eef2ec}.keypad .confirm{grid-column:2 / 4;background:var(--accent);color:white;border-color:var(--accent);font-size:16px;font-weight:700}
+    @media(min-width:600px){main{padding-top:60px}.card{padding:26px}.fields{gap:18px}.label{font-size:14px}.number{min-height:80px;font-size:30px}}
+    @media(max-height:650px){dialog{padding:16px}.dialog-head{margin-bottom:8px}.keypad{gap:6px}.keypad button{min-height:43px}#entry{height:52px}}
+  </style>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">LINE LENGTH CONVERTER</p><h1>捲線器誤差換算</h1><p>輸入米數，立即換算。<br>點選數字可輸入米數或調整倍數。</p></header>
+    <section class="card" aria-labelledby="first-title">
+      <div class="card-head"><span class="step">01</span><h2 id="first-title">現有米數 → 實際米數</h2></div>
+      <div class="fields">
+        <div class="field"><span class="label">現有米數</span><button class="number editable" data-row="0" data-kind="value" aria-label="輸入現有米數">0</button><span class="unit">米 · 點選輸入</span></div>
+        <div class="field"><span class="label">實際米數</span><output class="number result" id="result-0" aria-live="polite">0</output><span class="unit">米 · 換算結果</span></div>
+        <div class="field"><span class="label">換算倍數</span><button class="number editable" data-row="0" data-kind="factor" aria-label="修改第一組倍數">0.66</button><span class="unit">點選修改</span></div>
+      </div><p class="formula" id="formula-0">0 × 0.66 = 0 米</p>
+    </section>
+    <section class="card" aria-labelledby="second-title">
+      <div class="card-head"><span class="step">02</span><h2 id="second-title">實際米數 → 要放米數</h2></div>
+      <div class="fields">
+        <div class="field"><span class="label">實際米數</span><button class="number editable" data-row="1" data-kind="value" aria-label="輸入實際米數">0</button><span class="unit">米 · 點選輸入</span></div>
+        <div class="field"><span class="label">要放米數</span><output class="number result" id="result-1" aria-live="polite">0</output><span class="unit">米 · 換算結果</span></div>
+        <div class="field"><span class="label">換算倍數</span><button class="number editable" data-row="1" data-kind="factor" aria-label="修改第二組倍數">1.5</button><span class="unit">點選修改</span></div>
+      </div><p class="formula" id="formula-1">0 × 1.5 = 0 米</p>
+    </section>
+    <footer>計算方式：左欄米數 × 右欄倍數 = 中欄結果<br>倍數會保存在這台裝置的瀏覽器中。<div id="storage-note" role="status"></div><button class="reset" id="reset">清空米數</button></footer>
+  </main>
+  <dialog id="number-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head"><h2 id="dialog-title">輸入米數</h2><button class="close" id="cancel" aria-label="取消輸入">×</button></div>
+    <input id="entry" type="text" inputmode="none" readonly aria-label="數字" maxlength="24">
+    <p class="error" id="error" role="alert"></p>
+    <div class="keypad">
+      <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+      <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+      <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+      <button data-key="clear" class="utility">清除</button><button data-key="0">0</button><button data-key=".">.</button>
+      <button data-key="back" class="utility" aria-label="退一格">⌫</button><button data-key="confirm" class="confirm">確定</button>
+    </div>
+  </dialog>
+  <script>
+    'use strict';
+    // Use integer decimal multiplication to avoid floating-point display errors.
+    function normalize(value) {
+      const [whole, fraction = ''] = value.split('.');
+      const integer = whole.replace(/^0+(?=\d)/, '') || '0';
+      const decimal = fraction.replace(/0+$/, '');
+      return integer + (decimal ? '.' + decimal : '');
+    }
+    function multiply(left, right) {
+      const places = value => (value.split('.')[1] || '').length;
+      const scale = places(left) + places(right);
+      const product = (BigInt(left.replace('.', '')) * BigInt(right.replace('.', ''))).toString();
+      if (!scale) return product;
+      const padded = product.padStart(scale + 1, '0');
+      return normalize(padded.slice(0, -scale) + '.' + padded.slice(-scale));
+    }
+    function isValid(value) { return typeof value === 'string' && value.length <= 24 && /^\d+(\.\d*)?$/.test(value); }
+    const storageKey = 'reel-converter-factors-v1';
+    const rows = [{value:'0', factor:'0.66'}, {value:'0', factor:'1.5'}];
+    const storageNote = document.getElementById('storage-note');
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey));
+      if (Array.isArray(saved) && saved.length === 2 && saved.every(isValid)) saved.forEach((factor, i) => rows[i].factor = normalize(factor));
+    } catch { storageNote.textContent = '目前無法讀取已儲存的倍數，使用預設值。'; }
+    function render() {
+      rows.forEach((row, i) => {
+        const result = multiply(row.value, row.factor);
+        document.querySelector(`[data-row="${i}"][data-kind="value"]`).textContent = row.value;
+        document.querySelector(`[data-row="${i}"][data-kind="factor"]`).textContent = row.factor;
+        document.getElementById(`result-${i}`).textContent = result;
+        document.getElementById(`formula-${i}`).textContent = `${row.value} × ${row.factor} = ${result} 米`;
+      });
+    }
+    const dialog = document.getElementById('number-dialog');
+    const entry = document.getElementById('entry');
+    const error = document.getElementById('error');
+    let active = null;
+    let replace = true;
+    document.querySelectorAll('.editable').forEach(button => button.addEventListener('click', () => {
+      active = {row:Number(button.dataset.row), kind:button.dataset.kind};
+      document.getElementById('dialog-title').textContent = button.getAttribute('aria-label');
+      entry.value = rows[active.row][active.kind];
+      replace = true;
+      error.textContent = '';
+      dialog.showModal();
+      entry.focus();
+      entry.select();
+    }));
+    function press(key) {
+      error.textContent = '';
+      if (key === 'confirm') {
+        if (!isValid(entry.value)) { error.textContent = '請輸入有效的米數或倍數。'; return; }
+        rows[active.row][active.kind] = normalize(entry.value);
+        if (active.kind === 'factor') {
+          try { localStorage.setItem(storageKey, JSON.stringify(rows.map(row => row.factor))); storageNote.textContent = ''; }
+          catch { storageNote.textContent = '倍數已更新，但瀏覽器無法儲存，下次開啟將使用預設值。'; }
+        }
+        render();
+        dialog.close();
+        return;
+      }
+      if (key === 'clear') { entry.value = ''; replace = false; return; }
+      if (key === 'back') { entry.value = replace ? '' : entry.value.slice(0, -1); replace = false; return; }
+      if (!/^[0-9.]$/.test(key)) return;
+      let next = replace ? '' : entry.value;
+      if (key === '.' && next.includes('.')) return;
+      if (key === '.' && !next) next = '0';
+      if (next.length >= 24) { error.textContent = '最多可輸入 24 個字元。'; return; }
+      entry.value = next + key;
+      replace = false;
+    }
+    document.querySelectorAll('[data-key]').forEach(button => button.addEventListener('click', () => press(button.dataset.key)));
+    document.getElementById('cancel').addEventListener('click', () => dialog.close());
+    document.addEventListener('keydown', event => {
+      if (!dialog.open || event.ctrlKey || event.metaKey || event.altKey) return;
+      const key = /^[0-9.]$/.test(event.key) ? event.key : ({Backspace:'back', Delete:'clear', Enter:'confirm'})[event.key];
+      if (key) { event.preventDefault(); press(key); }
+    });
+    document.getElementById('reset').addEventListener('click', () => { rows.forEach(row => row.value = '0'); render(); });
+    render();
+  </script>
+</body>
+</html>
