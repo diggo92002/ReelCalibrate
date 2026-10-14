@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "捲線器誤差換算",
+  "short_name": "米數換算",
+  "description": "捲線器米數誤差換算工具",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef3ed",
+  "theme_color": "#205c50",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

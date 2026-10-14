@@ -1,0 +1,15 @@
+# 本機開發工具、暫存與個人設定
+.tools/
+.openai/
+.sites-runtime/
+.sites-checkout/
+.vscode/
+.idea/
+node_modules/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# icon-192.png 和 icon-512.png 是網站圖示，請一起上傳。
